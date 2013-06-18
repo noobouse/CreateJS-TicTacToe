@@ -9,6 +9,8 @@ I wouldn't say there's anything particularly clever in this build and the graphi
 
 There is an option between one and two players. The single player AI is rather basic and uses a brute force method to look for blocks; it doesn't really play to win. When playing two player you have the option to switch sides at the end of a game.
 
+Here's the PhoneGap Build share page: https://build.phonegap.com/apps/441990/share
+
 #### Things I might do:
 
 Update graphics, especially that splash screen! Geez, it's ugly.

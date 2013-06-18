@@ -92,7 +92,7 @@ function Load() {
         // the bug is that the first frame or two of the canvas ghosts onto the following frames
         var delayInit = setTimeout(function () {
             Init();
-        }, 100);
+        }, 250);
     }
 
 }
