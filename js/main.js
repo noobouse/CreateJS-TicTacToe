@@ -505,6 +505,13 @@ function NewGame() {
 }
 
 function SwitchSides() {
+    // swap scores
+    var newP2Score = player1Score;
+    player1Score = player2Score;
+    player2Score = newP2Score;
+    player1ScoreText.text = "Score: " + player1Score;
+    player2ScoreText.text = "Score: " + player2Score;
+    
     // just rotate entire stage around
     var tween;
     if (stage.rotation === 0) {

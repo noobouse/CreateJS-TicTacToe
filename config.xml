@@ -9,7 +9,7 @@
     <name>TicTacToe</name>
 
     <description>
-        Simple TicTacToe game built with EaselJS.
+        Simple TicTacToe game built with CreateJS.
     </description>
 
     <author href="http://travis.almand.net">
