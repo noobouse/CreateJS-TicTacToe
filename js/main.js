@@ -1,23 +1,19 @@
 // globals
-var $window = $(window);
-var $doc = $("document");
-var $container = $("#container");
-var $canvas = $("#canvas");
+var $container = document.getElementById("container");
+var $canvas = document.getElementById("canvas");
 var canvasContext = document.getElementById("canvas").getContext("2d");
-var $bg = $("#bg");
-var $loading = $("#loading");
-var canvas, stage, lines, squares = [], defaultX, defaultO, thisX, thisY, pieces, p1Text, p2Text;
+var $loading = document.getElementById("loading");
+var stage, lines, squares = [], defaultX, defaultO, thisX, thisY, pieces, p1Text, p2Text;
 var endGameMenu, endGameBack, endGameAnotherBtn, endGameNewBtn, endGameSwitchBtn;
 var numPlayers, numPlayersMenu, numPlayersBack, numPlayersOneBtn, numPlayersTwoBtn;
 var numGames = theWinner = player1Score = player2Score = 0;
 var player1ScoreText, player2ScoreText;
+var currentPlayer, continueGame;
 
 var board = [0, 0, 0, 0, 0, 0, 0 ,0, 0];
 
 var canvasH = 720;
 var canvasW = 480;
-
-var currentPlayer, continueGame;
 
 var manifest = [
     {src: "images/lines.png", id: "lines"},
@@ -28,19 +24,14 @@ var manifest = [
     {src: "images/endGameAnotherBtn.png", id: "endGameAnotherBtn"},
     {src: "images/endGameNewBtn.png", id: "endGameNewBtn"},
     {src: "images/endGameSwitchBtn.png", id: "endGameSwitchBtn"},
-    {src: "sounds/click1.mp3 | sounds/click1.ogg", id: "click"},
     {src: "images/numPlayersBack.png", id: "numPlayersBack"},
     {src: "images/numPlayersOneBtn.png", id: "numPlayersOneBtn"},
-    {src: "images/numPlayersTwoBtn.png", id: "numPlayersTwoBtn"},
+    {src: "images/numPlayersTwoBtn.png", id: "numPlayersTwoBtn"}
 ];
-
-var preload, totalLoaded;
 
 Load();
 function Load() {
-    
-    canvas = document.getElementById("canvas");
-    stage = new createjs.Stage(canvas);
+    stage = new createjs.Stage($canvas);
     stage.enableMouseOver(10);
     stage.regX = canvasW / 2;
     stage.regY = canvasH / 2;
@@ -50,55 +41,33 @@ function Load() {
     createjs.Ticker.setFPS(30);
     createjs.Ticker.useRAF = true;
     createjs.Ticker.addListener(window);
+    createjs.Sound.registerPlugins([createjs.WebAudioPlugin, createjs.HTMLAudioPlugin, createjs.FlashPlugin]);
+    // I should be able to register the sound through PreloadJS in the regular manifest
+    // but for some reason it doesn't seem to like two files separated with a |
+    createjs.Sound.registerSound("sounds/click1.mp3|sounds/click1.ogg", "click");
     
-    totalLoaded = 0;
+    var queue = new createjs.LoadQueue(true);
+    queue.installPlugin(createjs.Sound);
+    queue.addEventListener("progress", HandleProgress);
+    queue.addEventListener("complete", HandleComplete);
+    queue.loadManifest(manifest);
     
-    preload = new createjs.PreloadJS(false);
-    preload.onProgress = HandleProgress;
-    preload.onComplete = HandleComplete;
-    preload.onFileLoad = HandleFileLoad;
-    preload.installPlugin(createjs.SoundJS);
-    preload.loadManifest(manifest);
-    
-    function Stop() { if (preload !== null) { preload.close(); } }
-    
-    function HandleProgress(event) { $loading.height(event.loaded * canvasH); }
-    
-    function HandleFileLoad(event) {
-        if (event.type = "image") {
-            var img = new Image();
-            img.src = event.src;
-            img.onload = HandleLoadComplete;
-        } else if (event.type = "sound") {
-            var audio = new Audio();
-            audio.src = event.src;
-            audio.onload = HandleLoadComplete;
-        }
-    }
-    
-    function HandleLoadComplete(event) {
-        totalLoaded++;
-        if (totalLoaded === manifest.length) {
-//            console.log("Load Complete!");
-        } else {
-//            console.log(totalLoaded + "/" + manifest.length + " loaded");
-        }
+    function HandleProgress(event) {
+        $loading.style.height = event.loaded * canvasH;
     }
     
     function HandleComplete(event) {
-        $loading.fadeOut();
-        $canvas.fadeIn();
+        $loading.style.opacity = 0;
+        $canvas.style.opacity = 1;
         // slight delay on Init() due to Android Jelly Bean bug in canvas
         // the bug is that the first frame or two of the canvas ghosts onto the following frames
         var delayInit = setTimeout(function () {
             Init();
         }, 500);
     }
-
 }
 
 function Init() {
-    
     // this will hold the game pieces as they are placed
     // allows for easy removal for game reset
     pieces = new createjs.Container();
@@ -296,7 +265,7 @@ function PlayerOneMove(event) {
     x.y = event.target.y;
     pieces.addChild(x);
     tween = createjs.Tween.get(x, {loop: false}).to({scaleX: 1, scaleY: 1}, 500, createjs.Ease.backOut);
-    createjs.SoundJS.play("click");
+    createjs.Sound.play("click");
     board[parseInt(event.target.name)] = (currentPlayer === 1) ? 2 : 1;
     CheckTheBoard();
 }
@@ -309,7 +278,7 @@ function PlayerTwoMove(event) {
     o.y = event.target.y;
     pieces.addChild(o);
     tween = createjs.Tween.get(o, {loop: false}).to({scaleX: 1, scaleY: 1}, 500, createjs.Ease.backOut);
-    createjs.SoundJS.play("click");
+    createjs.Sound.play("click");
     board[parseInt(event.target.name)] = (currentPlayer === 1) ? 2 : 1;
     CheckTheBoard();
 }
@@ -324,7 +293,7 @@ function PlayerTwoAutoMove() {
     squares[move].visible = false;
     pieces.addChild(o);
     tween = createjs.Tween.get(o, {loop: false}).to({scaleX: 1, scaleY: 1}, 500, createjs.Ease.backOut);
-    createjs.SoundJS.play("click");
+    createjs.Sound.play("click");
     board[move] = (currentPlayer === 1) ? 2 : 1;
     CheckTheBoard();
 }
@@ -530,7 +499,7 @@ function RestoreSquares() {
 
 function tick() { stage.update(); }
                 
-$(window).on("resize", resize);
+window.addEventListener("resize", resize);
 resize();
 function resize() {
     var windowWidth = window.innerWidth;
@@ -542,10 +511,10 @@ function resize() {
     var optimalRatio = Math.min(scaleToFitX, scaleToFitY);
     
     if (currentScreenRatio >= 1.77 && currentScreenRatio <= 1.79) {
-        $container.css("width", windowWidth);
-        $container.css("height", windowHeight);
+        $container.style.width = windowWidth + "px";
+        $container.style.height = windowHeight + "px";
     } else {
-        $container.css("width", canvasW * optimalRatio);
-        $container.css("height", canvasH * optimalRatio);
+        $container.style.width = canvasW * optimalRatio + "px";
+        $container.style.height = canvasH * optimalRatio + "px";
     }
 }

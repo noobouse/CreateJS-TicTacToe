@@ -13,11 +13,9 @@ Here's the PhoneGap Build share page: https://build.phonegap.com/apps/441990/sha
 
 #### Things I might do:
 
-Update graphics, especially that splash screen! Geez, it's ugly.
+Update graphics, <strike>especially that splash screen! Geez, it's ugly.</strike> Removed splash screen, shouldn't need it anyway.
 
 Use file system to save stats on games played.
-
-Update to latest version of CreateJS.
 
 More end game options such as ability to switch between one and two player without having to restart app.
 
