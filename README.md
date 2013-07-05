@@ -13,7 +13,7 @@ Here's the PhoneGap Build share page: https://build.phonegap.com/apps/441990/sha
 
 #### Things I might do:
 
-Update graphics, <strike>especially that splash screen! Geez, it's ugly.</strike> Removed splash screen, shouldn't need it anyway.
+Update graphics.
 
 Use file system to save stats on games played.
 

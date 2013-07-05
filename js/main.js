@@ -46,7 +46,7 @@ function Load() {
     // but for some reason it doesn't seem to like two files separated with a |
     createjs.Sound.registerSound("sounds/click1.mp3|sounds/click1.ogg", "click");
     
-    var queue = new createjs.LoadQueue(true);
+    var queue = new createjs.LoadQueue(false);
     queue.installPlugin(createjs.Sound);
     queue.addEventListener("progress", HandleProgress);
     queue.addEventListener("complete", HandleComplete);
